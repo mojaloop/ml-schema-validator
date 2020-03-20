@@ -33,7 +33,7 @@ const regex = require('../regex/regex')
 const Joi = RootJoi.extend(DateExtension)
 
 const postHeadersSchema = Joi.object({
-  accept: Joi.string().optional().regex(regex.acceptRegex),
+  accept: Joi.string().required().regex(regex.acceptRegex),
   'content-type': Joi.string().required().regex(regex.contentTypeRegex),
   'content-length': Joi.number().max(5242880).optional(),
   date: Joi.date().format('ddd, D MMM YYYY H:mm:ss [GMT]').required(),
@@ -43,7 +43,7 @@ const postHeadersSchema = Joi.object({
   'fspiop-encryption': Joi.string().optional(),
   'fspiop-signature': Joi.string().optional(),
   'fspiop-uri': Joi.string().optional().regex(regex.fspiopUriRegex),
-  'fspiop-http-method': Joi.any().valid('GET', 'POST', 'PUT', 'DELETE')
+  'fspiop-http-method': Joi.any().valid('POST')
 })
 
 const putHeadersSchema = Joi.object({
@@ -54,12 +54,12 @@ const putHeadersSchema = Joi.object({
   'fspiop-destination': Joi.string().optional().regex(regex.fspNameAccentRegex),
   'fspiop-encryption': Joi.string().optional(),
   'fspiop-signature': Joi.string().optional(),
-  'fspiop-uri': Joi.string().optional(),
-  'fspiop-http-method': Joi.string().optional()
+  'fspiop-uri': Joi.string().optional().regex(regex.fspiopUriRegex),
+  'fspiop-http-method': Joi.any().valid('PUT')
 })
 
-const getDeleteHeadersSchema = Joi.object({
-  accept: Joi.string().optional().regex(regex.acceptRegex),
+const getHeadersSchema = Joi.object({
+  accept: Joi.string().required().regex(regex.acceptRegex),
   'content-type': Joi.string().required().regex(regex.contentTypeRegex),
   date: Joi.date().format('ddd, D MMM YYYY H:mm:ss [GMT]').required(),
   'x-forwarded-for': Joi.string().optional(),
@@ -67,12 +67,26 @@ const getDeleteHeadersSchema = Joi.object({
   'fspiop-destination': Joi.string().optional().regex(regex.fspNameAccentRegex),
   'fspiop-encryption': Joi.string().optional(),
   'fspiop-signature': Joi.string().optional(),
-  'fspiop-uri': Joi.string().optional(),
-  'fspiop-http-method': Joi.string().optional()
+  'fspiop-uri': Joi.string().optional().regex(regex.fspiopUriRegex),
+  'fspiop-http-method': Joi.any().valid('GET')
+})
+
+const deleteHeadersSchema = Joi.object({
+  accept: Joi.string().required().regex(regex.acceptRegex),
+  'content-type': Joi.string().required().regex(regex.contentTypeRegex),
+  date: Joi.date().format('ddd, D MMM YYYY H:mm:ss [GMT]').required(),
+  'x-forwarded-for': Joi.string().optional(),
+  'fspiop-source': Joi.string().required().regex(regex.fspNameAccentRegex),
+  'fspiop-destination': Joi.string().optional().regex(regex.fspNameAccentRegex),
+  'fspiop-encryption': Joi.string().optional(),
+  'fspiop-signature': Joi.string().optional(),
+  'fspiop-uri': Joi.string().optional().regex(regex.fspiopUriRegex),
+  'fspiop-http-method': Joi.any().valid('DELETE')
 })
 
 module.exports = {
   postHeadersSchema,
   putHeadersSchema,
-  getDeleteHeadersSchema
+  getHeadersSchema,
+  deleteHeadersSchema
 }
