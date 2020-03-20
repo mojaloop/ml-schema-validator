@@ -58,7 +58,7 @@ const putHeadersSchema = Joi.object({
   'fspiop-http-method': Joi.string().optional()
 })
 
-const getHeadersSchema = Joi.object({
+const getDeleteHeadersSchema = Joi.object({
   accept: Joi.string().optional().regex(regex.acceptRegex),
   'content-type': Joi.string().required().regex(regex.contentTypeRegex),
   date: Joi.date().format('ddd, D MMM YYYY H:mm:ss [GMT]').required(),
@@ -74,5 +74,5 @@ const getHeadersSchema = Joi.object({
 module.exports = {
   postHeadersSchema,
   putHeadersSchema,
-  getHeadersSchema
+  getDeleteHeadersSchema
 }
