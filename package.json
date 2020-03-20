@@ -1,0 +1,60 @@
+{
+  "name": "ml-schema-validator",
+  "version": "9.4.0",
+  "description": "Mojaloop library that contains Joi schema validations that align with the Mojaloop API",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mojaloop/ml-schema-validator.git"
+  },
+  "keywords": [
+    "joi",
+    "schema",
+    "mojaloop",
+    "validation"
+  ],
+  "author": "ModusBox",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/mojaloop/ml-schema-validator/issues"
+  },
+  "homepage": "https://github.com/mojaloop/ml-schema-validator#readme",
+  "standard": {
+    "env": [
+      "jest"
+    ]
+  },
+  "pre-commit": [
+    "standard",
+    "dep:check",
+    "test"
+  ],
+  "scripts": {
+    "standard": "standard",
+    "test": "npm run test:unit",
+    "test:unit": "jest --runInBand --testMatch --passWithNoTests '**/test/unit/**/*.test.js'",
+    "test:coverage": "jest --runInBand --coverage --coverageThreshold='{}' --testMatch '**/test/unit/**/*.test.js'",
+    "test:coverage-check": "jest --runInBand --coverage --testMatch '**/test/unit/**/*.test.js'",
+    "lint": "eslint --ignore-path ../.eslintignore .",
+    "audit:resolve": "SHELL=sh resolve-audit",
+    "audit:check": "SHELL=sh check-audit",
+    "dep:check": "npx ncu -e 2",
+    "dep:update": "npx ncu -u"
+  },
+  "dependencies": {
+    "@hapi/joi": "17.1.1",
+    "@hapi/joi-date": "2.0.1",
+    "joi-currency-code": "3.0.1"
+  },
+  "devDependencies": {
+    "@types/jest": "25.1.4",
+    "eslint": "6.8.0",
+    "eslint-plugin-jest": "23.8.2",
+    "jest": "25.1.0",
+    "jest-junit": "10.0.0",
+    "npm-audit-resolver": "2.2.0",
+    "npm-check-updates": "4.0.4",
+    "pre-commit": "1.2.2",
+    "standard": "14.3.3"
+  }
+}
