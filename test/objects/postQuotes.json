@@ -1,0 +1,36 @@
+{
+  "quoteId": "58ce03af-a0cf-4a53-b982-bcf63efbf083",
+  "transactionId": "39a83b3a-19fe-4615-876e-6cc842acc4ed",
+  "payer": {
+    "partyIdInfo": {
+      "partyIdType": "MSISDN",
+      "partyIdentifier": "bob",
+      "fspId": "payerfsp"
+    },
+    "personalInfo": {
+      "complexName": {
+        "firstName": "δεζηθικλμνξ",
+        "lastName": "íűáóüöúőűéôd"
+      },
+      "dateOfBirth": "1983-10-25"
+    }
+  },
+  "payee": {
+    "partyIdInfo": {
+      "partyIdType": "MSISDN",
+      "partyIdentifier": "22556999125",
+      "fspId": "payeefsp"
+    }
+  },
+  "amountType": "SEND",
+  "amount": {
+    "amount": "60.1234",
+    "currency": "USD"
+  },
+  "transactionType": {
+    "scenario": "TRANSFER",
+    "initiator": "PAYER",
+    "initiatorType": "CONSUMER"
+  },
+  "note": "hej"
+}

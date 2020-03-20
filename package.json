@@ -32,7 +32,7 @@
   "scripts": {
     "standard": "standard",
     "test": "npm run test:unit",
-    "test:unit": "jest --runInBand --testMatch --passWithNoTests '**/test/unit/**/*.test.js'",
+    "test:unit": "jest --runInBand --testMatch '**/test/unit/**/*.test.js'",
     "test:coverage": "jest --runInBand --coverage --coverageThreshold='{}' --testMatch '**/test/unit/**/*.test.js'",
     "test:coverage-check": "jest --runInBand --coverage --testMatch '**/test/unit/**/*.test.js'",
     "lint": "eslint --ignore-path ../.eslintignore .",
