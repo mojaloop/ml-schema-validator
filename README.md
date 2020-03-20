@@ -18,6 +18,8 @@ To use the library you can import it into your project
 
 ## Tests
 
+Currently test coverage will automatically pass at 100% because these are just objects, I would always suggest creating a JSON and create a test against the schema if you are contributing. Both positive and negative scenarios 
+
 Running the tests:
 
     npm run test
