@@ -2,7 +2,7 @@
   "name": "@mojaloop/ml-schema-validator",
   "version": "9.4.0",
   "description": "Mojaloop library that contains Joi schema validations that align with the Mojaloop API",
-  "main": "index.js",
+  "main": "src/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mojaloop/ml-schema-validator.git"
