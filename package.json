@@ -1,5 +1,5 @@
 {
-  "name": "ml-schema-validator",
+  "name": "@mojaloop/ml-schema-validator",
   "version": "9.4.0",
   "description": "Mojaloop library that contains Joi schema validations that align with the Mojaloop API",
   "main": "index.js",
