@@ -14,6 +14,9 @@
     "validation"
   ],
   "author": "ModusBox",
+  "contributors": [
+    "Rajiv Mothilal <rajiv.mothilal@modusbox.com>"
+  ],
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/mojaloop/ml-schema-validator/issues"
