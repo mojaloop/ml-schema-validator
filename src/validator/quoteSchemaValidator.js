@@ -66,8 +66,53 @@ const putQuoteSchema = Joi.object({
 
 const putQuoteErrorSchema = errorInformationValidator.errorInformationSchema.required().description('Error information')
 
+const individualQuoteSchema = Joi.object({
+  quoteId: Joi.string().guid().required().description('Id of quote').label('Quote Id must be in a valid GUID format.'),
+  transactionId: Joi.string().guid().required().description('Id of transfer').label('Transaction Id must be in a valid GUID format.'),
+  payee: partyValidator.partySchema.required(),
+  amountType: Joi.any().valid('SEND', 'RECEIVE').required(),
+  amount: moneyValidator.moneySchema.required(),
+  fees: moneyValidator.moneySchema.optional(),
+  transactionType: transactionTypeValidator.transactionTypeSchema.required(),
+  note: Joi.string().min(1).max(128).optional(),
+  extensionList: extensionListValidator.extensionListSchema.optional()
+})
+
+const individualQuoteResultSchema = Joi.object({
+  quoteId: Joi.string().guid().required().description('Id of quote').label('Quote Id must be in a valid GUID format.'),
+  payee: partyValidator.partySchema.optional(),
+  transferAmount: moneyValidator.moneySchema.optional(),
+  payeeReceiveAmount: moneyValidator.moneySchema.optional(),
+  payeeFspFee: moneyValidator.moneySchema.optional(),
+  payeeFspCommission: moneyValidator.moneySchema.optional(),
+  ilpPacket: ilpValidator.ilpPacketSchema.optional(),
+  condition: ilpValidator.ilpConditionSchema.optional(),
+  errorInformation: errorInformationValidator.errorObjectSchema.optional().description('Error information'),
+  extensionList: extensionListValidator.extensionListSchema.optional()
+})
+
+const postBulkQuoteSchema = Joi.object({
+  bulkQuoteId: Joi.string().guid().required().description('Id of quote').label('Bulk Quote Id must be in a valid GUID format.'),
+  payer: partyValidator.partySchema.required(),
+  geoCode: geoCodeValidator.geoCodeSchema.optional(),
+  note: Joi.string().min(1).max(128).optional(),
+  expiration: Joi.string().regex(regex.dateTimeRegex).optional(),
+  individualQuotes: Joi.array().items(individualQuoteSchema).min(1).max(1000).required(),
+  extensionList: extensionListValidator.extensionListSchema.optional()
+})
+
+const putBulkQuoteSchema = Joi.object({
+  individualQuoteResults: Joi.array().items(individualQuoteResultSchema).max(1000).optional(),
+  expiration: Joi.string().regex(regex.dateTimeRegex).required(),
+  extensionList: extensionListValidator.extensionListSchema.optional()
+})
+
 module.exports = {
   postQuoteSchema,
   putQuoteSchema,
-  putQuoteErrorSchema
+  putQuoteErrorSchema,
+  individualQuoteSchema,
+  postBulkQuoteSchema,
+  individualQuoteResultSchema,
+  putBulkQuoteSchema
 }
