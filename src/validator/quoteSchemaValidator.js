@@ -31,7 +31,6 @@ const partyValidator = require('./partySchemaValidator')
 const transactionTypeValidator = require('./transactionSchemaValidator')
 const Elements = require('./elementValidator')
 const ComplexTypes = require('./complexTypesValidator')
-const regex = require('../regex/regex')
 
 const postQuoteSchema = Joi.object({
   quoteId: Elements.CorrelationId.required().description('Common ID between the FSPs for the quote object, decided by the Payer FSP. The ID should be reused for resends of the same quote for a transaction. A new ID should be generated for each new quote for a transaction.').label('Quote Id must be in a valid GUID format.'),
@@ -89,18 +88,17 @@ const individualQuoteResultSchema = Joi.object({
 })
 
 const postBulkQuoteSchema = Joi.object({
-  bulkQuoteId: Joi.string().guid().required().description('Id of quote').label('Bulk Quote Id must be in a valid GUID format.'),
-  payer: partyValidator.partySchema.required(),
-  geoCode: ComplexTypes.geoCodeSchema.optional(),
-  note: Joi.string().min(1).max(128).optional(),
-  expiration: Joi.string().regex(regex.dateTimeRegex).optional(),
-  individualQuotes: Joi.array().items(individualQuoteSchema).min(1).max(1000).required(),
+  bulkQuoteId: Elements.CorrelationId.required().description('Common ID between the FSPs for the bulk quote object, decided by the Payer FSP. The ID should be reused for resends of the same bulk quote. A new ID should be generated for each new bulk quote.').label('Bulk Quote Id must be in a valid GUID format.'),
+  payer: partyValidator.partySchema.required().description('Information about the Payer in the proposed financial transaction.'),
+  geoCode: ComplexTypes.geoCodeSchema.optional().description('Longitude and Latitude of the initiating Party. Can be used to detect fraud.'),
+  expiration: Elements.DateTime.optional().description('Expiration is optional to let the Payee FSP know when a quote no longer needs to be returned.'),
+  individualQuotes: Joi.array().items(individualQuoteSchema).min(1).max(1000).required().description('List of quotes elements.'),
   extensionList: ComplexTypes.extensionListSchema.optional()
 })
 
 const putBulkQuoteSchema = Joi.object({
-  individualQuoteResults: Joi.array().items(individualQuoteResultSchema).max(1000).optional(),
-  expiration: Joi.string().regex(regex.dateTimeRegex).required(),
+  individualQuoteResults: Joi.array().items(individualQuoteResultSchema).max(1000).optional().description('Fees for each individual transaction, if any of them are charged per transaction.'),
+  expiration: Elements.DateTime.required().description('Date and time until when the quotation is valid and can be honored when used in the subsequent transaction request.'),
   extensionList: ComplexTypes.extensionListSchema.optional()
 })
 

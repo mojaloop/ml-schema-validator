@@ -77,6 +77,7 @@ const PartyIdentifier = Joi.string().min(1).max(128)
 const PartyIdType = Joi.any().valid('MSISDN', 'EMAIL', 'PERSONAL_ID', 'BUSINESS', 'DEVICE', 'ACCOUNT_ID', 'IBAN', 'ALIAS')
 const PartyName = Joi.string().regex(regex.namePlaceAccentRegex)
 const PartySubIdOrType = Joi.string().min(1).max(128)
+const PersonalIdentifierType = Joi.any().valid('PASSPORT', 'NATIONAL_REGISTRATION', 'DRIVING_LICENSE', 'ALIEN_REGISTRATION', 'NATIONAL_ID_CARD', 'EMPLOYER_ID', 'TAX_ID_NUMBER', 'SENIOR_CITIZENS_CARD', 'MARRIAGE_CERTIFICATE', 'HEALTH_CARD', 'VOTERS_ID', 'UNITED_NATIONS', 'OTHER_ID')
 const RefundReason = Joi.string().regex(regex.namePlaceAccentRegex)
 const TransactionInitiator = Joi.any().valid('PAYER', 'PAYEE')
 const TransactionInitiatorType = Joi.any().valid('CONSUMER', 'AGENT', 'BUSINESS', 'DEVICE')
@@ -130,6 +131,7 @@ module.exports = {
   PartyIdType,
   PartyName,
   PartySubIdOrType,
+  PersonalIdentifierType,
   RefundReason,
   TransactionInitiator,
   TransactionInitiatorType,

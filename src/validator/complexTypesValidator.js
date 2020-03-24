@@ -29,11 +29,6 @@ const Joi = require('@hapi/joi')
 
 const Elements = require('./elementValidator')
 
-const authenticationInfoSchema = Joi.object({
-  authentication: Elements.AuthenticationType.required().description('Type of authentication.'),
-  authenticationValue: Elements.AuthenticationValue.required().description('Authentication value.')
-})
-
 const extensionSchema = Joi.array().items(Joi.object().keys({
   key: Elements.ExtensionKey.required().description('Extension key.').label('Supplied key fails to match the required format.'),
   value: Elements.ExtensionValue.required().description('Extension value.').label('Supplied key value fails to match the required format.')
@@ -75,7 +70,6 @@ const refundSchema = Joi.object({
 })
 
 module.exports = {
-  authenticationInfoSchema,
   errorInformationSchema,
   errorObjectSchema,
   extensionSchema,
