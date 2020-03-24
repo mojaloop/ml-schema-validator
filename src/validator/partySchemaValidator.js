@@ -27,36 +27,46 @@
 
 const Joi = require('@hapi/joi')
 
-const regex = require('../regex/regex')
+const Elements = require('./elementValidator')
+const ComplexTypes = require('./complexTypesValidator')
 
 const partyComplexNameSchema = Joi.object({
-  firstName: Joi.string().optional().regex(regex.namePlaceAccentRegex),
-  middleName: Joi.string().optional().regex(regex.namePlaceAccentRegex),
-  lastName: Joi.string().optional().regex(regex.namePlaceAccentRegex)
+  firstName: ComplexTypes.firstNameSchema.optional().description('Party’s first name.'),
+  middleName: ComplexTypes.middleNameSchema.optional().description('Party’s middle name.'),
+  lastName: ComplexTypes.lastNameSchema.optional().description('Party ’s last name.')
 })
 
 const partyPersonalInfoSchema = Joi.object({
-  complexName: partyComplexNameSchema.optional(),
-  dateOfBirth: Joi.string().optional().regex(regex.dateRegex).description('Date of birth of party').label('A valid date of birth must be supplied.')
+  complexName: partyComplexNameSchema.optional().description('First, middle and last name for the Party'),
+  dateOfBirth: Elements.DateOfBirth.optional().description('Date of birth of party').label('A valid date of birth must be supplied.')
 })
 
 const partyIdInfoSchema = Joi.object({
-  partyIdType: Joi.any().valid('MSISDN', 'EMAIL', 'PERSONAL_ID', 'BUSINESS', 'DEVICE', 'ACCOUNT_ID', 'IBAN', 'ALIAS'),
-  partyIdentifier: Joi.string().min(1).max(128).required(),
-  partySubIdOrType: Joi.string().min(1).max(128).optional(),
-  fspId: Joi.string().optional().regex(regex.fspNameAccentRegex)
+  partyIdType: Elements.PartyIdType.required().description('Type of the identifier'),
+  partyIdentifier: Elements.PartyIdentifier.required().description('An identifier for the Party.'),
+  partySubIdOrType: Elements.PartySubIdOrType.optional().description('A sub-identifier or sub-type for the Party'),
+  fspId: Elements.FspId.optional().description('FSP ID (if known)')
 })
 
 const partySchema = Joi.object({
-  partyIdInfo: partyIdInfoSchema.required(),
-  merchantClassificationCode: Joi.string().optional().regex(regex.merchantClassificationCodeRegex),
-  name: Joi.string().optional().regex(regex.namePlaceAccentRegex),
-  personalInfo: partyPersonalInfoSchema.optional()
+  partyIdInfo: partyIdInfoSchema.required().description('Party Id type, id, sub ID or type, and FSP Id.'),
+  merchantClassificationCode: Elements.MerchantClassificationCode.optional().description('Used in the context of Payee Information, where the Payee happens to be a merchant accepting merchant payments.'),
+  name: Elements.Name.optional().description('Display name of the Party, could be a real name or a nick name.'),
+  personalInfo: partyPersonalInfoSchema.optional().description('Personal information used to verify identity of Party such as first, middle, last name and date of birth.')
 })
+
+const partyResultSchema = Joi.object({
+  partyId: partyIdInfoSchema.required().description('Party Id type, id, sub ID or type, and FSP Id.'),
+  errorInformation: ComplexTypes.errorInformationSchema.optional().description('If the Party failed to be added, error information should be provided. Otherwise, this parameter should be empty to indicate success.')
+})
+
+const putPartiesErrorSchema = ComplexTypes.errorInformationSchema.required().description('Error code, category description.')
 
 module.exports = {
   partyComplexNameSchema,
   partyPersonalInfoSchema,
   partyIdInfoSchema,
-  partySchema
+  partySchema,
+  partyResultSchema,
+  putPartiesErrorSchema
 }

@@ -28,83 +28,80 @@
 const Joi = require('@hapi/joi')
 
 const partyValidator = require('./partySchemaValidator')
-const moneyValidator = require('./moneySchemaValidator')
 const transactionTypeValidator = require('./transactionSchemaValidator')
-const geoCodeValidator = require('./geoCodeSchemaValidator')
-const extensionListValidator = require('./extensionListSchemaValidator')
-const ilpValidator = require('./ilpSchemaValidator')
-const errorInformationValidator = require('./errorInformationSchemaValidator')
+const Elements = require('./elementValidator')
+const ComplexTypes = require('./complexTypesValidator')
 const regex = require('../regex/regex')
 
 const postQuoteSchema = Joi.object({
-  quoteId: Joi.string().guid().required().description('Id of quote').label('Quote Id must be in a valid GUID format.'),
-  transactionId: Joi.string().guid().required().description('Id of transfer').label('Transaction Id must be in a valid GUID format.'),
-  transactionRequestId: Joi.string().guid().optional().description('Id of transaction request').label('Transaction Request Id must be in a valid GUID format.'),
-  payee: partyValidator.partySchema.required(),
-  payer: partyValidator.partySchema.required(),
-  amountType: Joi.any().valid('SEND', 'RECEIVE').required(),
-  amount: moneyValidator.moneySchema.required(),
-  fees: moneyValidator.moneySchema.optional(),
-  transactionType: transactionTypeValidator.transactionTypeSchema.required(),
-  geoCode: geoCodeValidator.geoCodeSchema.optional(),
-  note: Joi.string().min(1).max(128).optional(),
-  expiration: Joi.string().regex(regex.dateTimeRegex).optional(),
-  extensionList: extensionListValidator.extensionListSchema.optional()
+  quoteId: Elements.CorrelationId.required().description('Common ID between the FSPs for the quote object, decided by the Payer FSP. The ID should be reused for resends of the same quote for a transaction. A new ID should be generated for each new quote for a transaction.').label('Quote Id must be in a valid GUID format.'),
+  transactionId: Elements.CorrelationId.required().description('Common ID (decided by the Payer FSP) between the FSPs for the future transaction object. The actual transaction will be created as part of a successful transfer process. The ID should be reused for resends of the same quote for a transaction. A new ID should be generated for each new quote for a transaction.').label('Transaction Id must be in a valid GUID format.'),
+  transactionRequestId: Elements.CorrelationId.optional().description('Identifies an optional previously-sent transaction request.').label('Transaction Request Id must be in a valid GUID format.'),
+  payee: partyValidator.partySchema.required().description('Information about the Payee in the proposed financial transaction.'),
+  payer: partyValidator.partySchema.required().description('Information about the Payer in the proposed financial transaction.'),
+  amountType: Elements.AmountType.description('SEND for send amount, RECEIVE for receive amount.'),
+  amount: ComplexTypes.moneySchema.required().description('Depending on amountType: If SEND: The amount the Payer would like to send; that is, the amount that should be withdrawn from the Payer account including any fees. The amount is updated by each participating entity in the transaction. If RECEIVE: The amount the Payee should receive; that is, the amount that should be sent to the receiver exclusive any fees. The amount is not updated by any of the participating entities.'),
+  fees: ComplexTypes.moneySchema.optional().description('Fees in the transaction. The fees element should be empty if fees should be non-disclosed. The fees element should be non-empty if fees should be disclosed.'),
+  transactionType: transactionTypeValidator.transactionTypeSchema.required().description('Type of transaction for which the quote is requested.'),
+  geoCode: ComplexTypes.geoCodeSchema.optional().description('Longitude and Latitude of the initiating Party. Can be used to detect fraud.'),
+  note: Elements.Note.optional().description('A memo that will be attached to the transaction.'),
+  expiration: Elements.DateTime.optional().description('Expiration is optional. It can be set to get a quick failure in case the peer FSP takes too long to respond. Also, it may be beneficial for Consumer, Agent, and Merchant to know that their request has a time limit.'),
+  extensionList: ComplexTypes.extensionListSchema.optional().description('Optional extension, specific to deployment.')
 })
 
 const putQuoteSchema = Joi.object({
-  transferAmount: moneyValidator.moneySchema.required(),
-  payeeReceiveAmount: moneyValidator.moneySchema.optional(),
-  payeeFspFee: moneyValidator.moneySchema.optional(),
-  payeeFspCommission: moneyValidator.moneySchema.optional(),
-  expiration: Joi.string().regex(regex.dateTimeRegex).required(),
-  geoCode: geoCodeValidator.geoCodeSchema.optional(),
-  ilpPacket: ilpValidator.ilpPacketSchema.required(),
-  condition: ilpValidator.ilpConditionSchema.required(),
-  extensionList: extensionListValidator.extensionListSchema.optional()
+  transferAmount: ComplexTypes.moneySchema.required().description('The amount of Money that the Payer FSP should transfer to the Payee FSP.'),
+  payeeReceiveAmount: ComplexTypes.moneySchema.optional().description('The amount of Money that the Payee should receive in the end-to-end transaction. Optional as the Payee FSP might not want to disclose any optional Payee fees.'),
+  payeeFspFee: ComplexTypes.moneySchema.optional().description('Payee FSP’s part of the transaction fee.'),
+  payeeFspCommission: ComplexTypes.moneySchema.optional().description('Transaction commission from the Payee FSP.'),
+  expiration: Elements.DateTime.required().description('Date and time until when the quotation is valid and can be honored when used in the subsequent transaction.'),
+  geoCode: ComplexTypes.geoCodeSchema.optional().description('Longitude and Latitude of the Payee. Can be used to detect fraud.'),
+  ilpPacket: Elements.IlpPacket.required().description('The ILP Packet that must be attached to the transfer by the Payer.'),
+  condition: Elements.IlpCondition.required().description('The condition that must be attached to the transfer by the Payer.'),
+  extensionList: ComplexTypes.extensionListSchema.optional().description('Optional extension, specific to deployment')
 })
 
-const putQuoteErrorSchema = errorInformationValidator.errorInformationSchema.required().description('Error information')
+const putQuoteErrorSchema = ComplexTypes.errorInformationSchema.required().description('Error information')
 
 const individualQuoteSchema = Joi.object({
-  quoteId: Joi.string().guid().required().description('Id of quote').label('Quote Id must be in a valid GUID format.'),
-  transactionId: Joi.string().guid().required().description('Id of transfer').label('Transaction Id must be in a valid GUID format.'),
-  payee: partyValidator.partySchema.required(),
-  amountType: Joi.any().valid('SEND', 'RECEIVE').required(),
-  amount: moneyValidator.moneySchema.required(),
-  fees: moneyValidator.moneySchema.optional(),
-  transactionType: transactionTypeValidator.transactionTypeSchema.required(),
-  note: Joi.string().min(1).max(128).optional(),
-  extensionList: extensionListValidator.extensionListSchema.optional()
+  quoteId: Elements.CorrelationId.required().description('Identifies quote message.').label('Quote Id must be in a valid GUID format.'),
+  transactionId: Elements.CorrelationId.required().description('Identifies transaction message.').label('Transaction Id must be in a valid GUID format.'),
+  payee: partyValidator.partySchema.required().description('Information about the Payee in the proposed financial transaction.'),
+  amountType: Elements.AmountType.required().description('SEND for sendAmount, RECEIVE for receiveAmount.'),
+  amount: ComplexTypes.moneySchema.required().description('Depending on amountType: If SEND: The amount the Payer would like to send; that is, the amount that should be withdrawn from the Payer account including any fees. The amount is updated by each participating entity in the transaction. If RECEIVE: The amount the Payee should receive; that is, the amount that should be sent to the receiver exclusive any fees. The amount is not updated by any of the participating entities.'),
+  fees: ComplexTypes.moneySchema.optional().description('Fees in the transaction. The fees element should be empty if fees should be non-disclosed. The fees element should be non-empty if fees should be disclosed.'),
+  transactionType: transactionTypeValidator.transactionTypeSchema.required().description('Type of transaction that the quote is requested for.'),
+  note: Elements.Note.optional().description('Memo that will be attached to the transaction.'),
+  extensionList: ComplexTypes.extensionListSchema.optional().description('Optional extension, specific to deployment.')
 })
 
 const individualQuoteResultSchema = Joi.object({
-  quoteId: Joi.string().guid().required().description('Id of quote').label('Quote Id must be in a valid GUID format.'),
-  payee: partyValidator.partySchema.optional(),
-  transferAmount: moneyValidator.moneySchema.optional(),
-  payeeReceiveAmount: moneyValidator.moneySchema.optional(),
-  payeeFspFee: moneyValidator.moneySchema.optional(),
-  payeeFspCommission: moneyValidator.moneySchema.optional(),
-  ilpPacket: ilpValidator.ilpPacketSchema.optional(),
-  condition: ilpValidator.ilpConditionSchema.optional(),
-  errorInformation: errorInformationValidator.errorObjectSchema.optional().description('Error information'),
-  extensionList: extensionListValidator.extensionListSchema.optional()
+  quoteId: Elements.CorrelationId.required().description('Identifies the quote message.').label('Quote Id must be in a valid GUID format.'),
+  payee: partyValidator.partySchema.optional().description('Information about the Payee in the proposed financial transaction.'),
+  transferAmount: ComplexTypes.moneySchema.optional().description('The amount of Money that the Payer FSP should transfer to the Payee FSP.'),
+  payeeReceiveAmount: ComplexTypes.moneySchema.optional().description('Amount that the Payee should receive in the end-to-end transaction. Optional as the Payee FSP might not want to disclose any optional Payee fees.'),
+  payeeFspFee: ComplexTypes.moneySchema.optional().description('Payee FSP’s part of the transaction fee.'),
+  payeeFspCommission: ComplexTypes.moneySchema.optional().description('Transaction commission from the Payee FSP.'),
+  ilpPacket: Elements.IlpPacket.optional().description('ILP Packet that must be attached to the transfer by the Payer.'),
+  condition: Elements.IlpCondition.optional().description('Condition that must be attached to the transfer by the Payer.'),
+  errorInformation: ComplexTypes.errorObjectSchema.optional().description('Error code, category description. Note: payee, transferAmount, payeeReceiveAmount, payeeFspFee, payeeFspCommission, ilpPacket, and condition should not be set if errorInformation is set.'),
+  extensionList: ComplexTypes.extensionListSchema.optional().description('Optional extension, specific to deployment')
 })
 
 const postBulkQuoteSchema = Joi.object({
   bulkQuoteId: Joi.string().guid().required().description('Id of quote').label('Bulk Quote Id must be in a valid GUID format.'),
   payer: partyValidator.partySchema.required(),
-  geoCode: geoCodeValidator.geoCodeSchema.optional(),
+  geoCode: ComplexTypes.geoCodeSchema.optional(),
   note: Joi.string().min(1).max(128).optional(),
   expiration: Joi.string().regex(regex.dateTimeRegex).optional(),
   individualQuotes: Joi.array().items(individualQuoteSchema).min(1).max(1000).required(),
-  extensionList: extensionListValidator.extensionListSchema.optional()
+  extensionList: ComplexTypes.extensionListSchema.optional()
 })
 
 const putBulkQuoteSchema = Joi.object({
   individualQuoteResults: Joi.array().items(individualQuoteResultSchema).max(1000).optional(),
   expiration: Joi.string().regex(regex.dateTimeRegex).required(),
-  extensionList: extensionListValidator.extensionListSchema.optional()
+  extensionList: ComplexTypes.extensionListSchema.optional()
 })
 
 module.exports = {

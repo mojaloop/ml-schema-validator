@@ -30,15 +30,22 @@ const Joi = require('@hapi/joi')
 const Elements = require('./elementValidator')
 const ComplexTypes = require('./complexTypesValidator')
 
-const transactionTypeSchema = Joi.object({
-  scenario: Elements.TransactionScenario.required().description('Deposit, withdrawal, refund, …'),
-  subScenario: Elements.TransactionSubScenario.optional().description('Possible sub-scenario, defined locally within the scheme.'),
-  initiator: Elements.TransactionInitiator.required().description('Who is initiating the transaction: Payer or Payee'),
-  initiatorType: Elements.TransactionInitiatorType.required().description('Consumer, agent, business, …'),
-  refundInfo: ComplexTypes.refundSchema.optional(),
-  balanceOfPayments: Elements.BalanceOfPayments.optional()
+const individualTransferSchema = Joi.object({
+  transferId: Elements.CorrelationId.required().description('Identifies messages related to the same /transfers sequence.'),
+  transferAmount: ComplexTypes.moneySchema.required().description('Transaction amount to be sent.'),
+  ilpPacket: Elements.IlpPacket.required().description('ILP Packet containing the amount delivered to the Payee and the ILP Address of the Payee and any other end-to-end data.'),
+  condition: Elements.IlpCondition.required().description('Condition that must be fulfilled to commit the transfer.'),
+  extensionList: ComplexTypes.extensionListSchema.optional().description('Optional extension, specific to deployment.')
+})
+
+const individualTransferResultSchema = Joi.object({
+  transferId: Elements.CorrelationId.required().description('Identifies messages related to the same /transfers sequence.'),
+  fulfilment: Elements.IlpFulfilment.optional().description('Fulfilment of the condition specified with the transaction. Note: Either fulfilment or errorInformation should be set, not both.'),
+  errorInformation: ComplexTypes.errorInformationSchema.optional().description('If transfer is REJECTED, error information may be provided. Note: Either fulfilment or errorInformation should be set, not both.'),
+  extensionList: ComplexTypes.extensionListSchema.optional().description('Optional extension, specific to deployment.')
 })
 
 module.exports = {
-  transactionTypeSchema
+  individualTransferSchema,
+  individualTransferResultSchema
 }

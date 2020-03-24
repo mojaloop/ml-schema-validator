@@ -25,63 +25,60 @@
 
 'use strict'
 
-const RootJoi = require('@hapi/joi')
-const DateExtension = require('@hapi/joi-date')
+const Joi = require('@hapi/joi')
 
-const regex = require('../regex/regex')
-
-const Joi = RootJoi.extend(DateExtension)
+const Elements = require('./elementValidator')
 
 const postHeadersSchema = Joi.object({
-  accept: Joi.string().required().regex(regex.acceptRegex),
-  'content-type': Joi.string().required().regex(regex.contentTypeRegex),
-  'content-length': Joi.number().max(5242880).optional(),
-  date: Joi.date().format('ddd, D MMM YYYY H:mm:ss [GMT]').required(),
-  'x-forwarded-for': Joi.string().optional(),
-  'fspiop-source': Joi.string().required().regex(regex.fspNameAccentRegex),
-  'fspiop-destination': Joi.string().optional().regex(regex.fspNameAccentRegex),
-  'fspiop-encryption': Joi.string().optional(),
-  'fspiop-signature': Joi.string().optional(),
-  'fspiop-uri': Joi.string().optional().regex(regex.fspiopUriRegex),
-  'fspiop-http-method': Joi.any().valid('POST')
+  accept: Elements.Accept.required(),
+  'content-type': Elements.ContentType.required(),
+  'content-length': Elements.ContentLength.optional(),
+  date: Elements.DateUTC.required(),
+  'x-forwarded-for': Elements.XForwardedFor.optional(),
+  'fspiop-source': Elements.FspiopSource.required(),
+  'fspiop-destination': Elements.FspiopDestination.optional(),
+  'fspiop-encryption': Elements.FspiopEncryption.optional(),
+  'fspiop-signature': Elements.FspiopSignature.optional(),
+  'fspiop-uri': Elements.FspiopUri.optional(),
+  'fspiop-http-method': Elements.FspiopHttpPostMethod.optional()
 })
 
 const putHeadersSchema = Joi.object({
-  'content-type': Joi.string().required().regex(regex.contentTypeRegex),
-  date: Joi.date().format('ddd, D MMM YYYY H:mm:ss [GMT]').required(),
-  'x-forwarded-for': Joi.string().optional(),
-  'fspiop-source': Joi.string().required().regex(regex.fspNameAccentRegex),
-  'fspiop-destination': Joi.string().optional().regex(regex.fspNameAccentRegex),
-  'fspiop-encryption': Joi.string().optional(),
-  'fspiop-signature': Joi.string().optional(),
-  'fspiop-uri': Joi.string().optional().regex(regex.fspiopUriRegex),
-  'fspiop-http-method': Joi.any().valid('PUT')
+  'content-type': Elements.ContentType.required(),
+  date: Elements.DateUTC.required(),
+  'x-forwarded-for': Elements.XForwardedFor.optional(),
+  'fspiop-source': Elements.FspiopSource.required(),
+  'fspiop-destination': Elements.FspiopDestination.optional(),
+  'fspiop-encryption': Elements.FspiopEncryption.optional(),
+  'fspiop-signature': Elements.FspiopSignature.optional(),
+  'fspiop-uri': Elements.FspiopUri.optional(),
+  'fspiop-http-method': Elements.FspiopHttpPutMethod.optional()
 })
 
 const getHeadersSchema = Joi.object({
-  accept: Joi.string().required().regex(regex.acceptRegex),
-  'content-type': Joi.string().required().regex(regex.contentTypeRegex),
-  date: Joi.date().format('ddd, D MMM YYYY H:mm:ss [GMT]').required(),
-  'x-forwarded-for': Joi.string().optional(),
-  'fspiop-source': Joi.string().required().regex(regex.fspNameAccentRegex),
-  'fspiop-destination': Joi.string().optional().regex(regex.fspNameAccentRegex),
-  'fspiop-encryption': Joi.string().optional(),
-  'fspiop-signature': Joi.string().optional(),
-  'fspiop-uri': Joi.string().optional().regex(regex.fspiopUriRegex),
-  'fspiop-http-method': Joi.any().valid('GET')
+  accept: Elements.Accept.required(),
+  'content-type': Elements.ContentType.required(),
+  date: Elements.DateUTC.required(),
+  'x-forwarded-for': Elements.XForwardedFor.optional(),
+  'fspiop-source': Elements.FspiopSource.required(),
+  'fspiop-destination': Elements.FspiopDestination.optional(),
+  'fspiop-encryption': Elements.FspiopEncryption.optional(),
+  'fspiop-signature': Elements.FspiopSignature.optional(),
+  'fspiop-uri': Elements.FspiopUri.optional(),
+  'fspiop-http-method': Elements.FspiopHttpGetMethod.optional()
 })
 
 const deleteHeadersSchema = Joi.object({
-  accept: Joi.string().required().regex(regex.acceptRegex),
-  'content-type': Joi.string().required().regex(regex.contentTypeRegex),
-  date: Joi.date().format('ddd, D MMM YYYY H:mm:ss [GMT]').required(),
-  'x-forwarded-for': Joi.string().optional(),
-  'fspiop-source': Joi.string().required().regex(regex.fspNameAccentRegex),
-  'fspiop-destination': Joi.string().optional().regex(regex.fspNameAccentRegex),
-  'fspiop-encryption': Joi.string().optional(),
-  'fspiop-signature': Joi.string().optional(),
-  'fspiop-uri': Joi.string().optional().regex(regex.fspiopUriRegex),
-  'fspiop-http-method': Joi.any().valid('DELETE')
+  accept: Elements.Accept.required(),
+  'content-type': Elements.ContentType.required(),
+  date: Elements.DateUTC.required(),
+  'x-forwarded-for': Elements.XForwardedFor.optional(),
+  'fspiop-source': Elements.FspiopSource.required(),
+  'fspiop-destination': Elements.FspiopDestination.optional(),
+  'fspiop-encryption': Elements.FspiopEncryption.optional(),
+  'fspiop-signature': Elements.FspiopSignature.optional(),
+  'fspiop-uri': Elements.FspiopUri.optional(),
+  'fspiop-http-method': Elements.FspiopHttpDeleteMethod.optional()
 })
 
 module.exports = {
