@@ -25,24 +25,24 @@
 
 'use strict'
 
-const ErrorInformationValidator = require('./errorInformationSchemaValidator')
-const ExtensionListValidator = require('./extensionListSchemaValidator')
-const GeoCodeValidator = require('./geoCodeSchemaValidator')
+const AuthorizationsValidator = require('./authorizationsSchemaValidator')
+const ComplexTypesValidator = require('./complexTypesValidator')
+const ElementValidator = require('./elementValidator')
 const HeadersValidator = require('./headersSchemaValidator')
-const IlpValidator = require('./ilpSchemaValidator')
-const MoneyValidator = require('./moneySchemaValidator')
+const ParticipantValidator = require('./participantSchemaValidator')
 const PartyValidator = require('./partySchemaValidator')
 const QuoteValidator = require('./quoteSchemaValidator')
 const TransactionValidator = require('./transactionSchemaValidator')
+const TransferValidator = require('./transferSchemaValidator')
 
 module.exports = {
-  ErrorInformationValidator,
-  ExtensionListValidator,
-  GeoCodeValidator,
+  AuthorizationsValidator,
+  ComplexTypesValidator,
+  ElementValidator,
   HeadersValidator,
-  IlpValidator,
-  MoneyValidator,
+  ParticipantValidator,
   PartyValidator,
   QuoteValidator,
-  TransactionValidator
+  TransactionValidator,
+  TransferValidator
 }
