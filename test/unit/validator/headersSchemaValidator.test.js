@@ -1,11 +1,11 @@
 'use strict'
 
-const HeadersValidator = require('../../../src/validator/headersSchemaValidator')
+const Validator = require('../../../src/').Validators
 const getHeadersObject = require('../../objects/getHeaders')
 
 describe('headersSchemaValidator', () => {
   it('getHeaders passes validation when supplied with a valid object', () => {
-    const result = HeadersValidator.getHeadersSchema.validate(getHeadersObject)
+    const result = Validator.HeadersValidator.getHeadersSchema.validate(getHeadersObject)
     if (result.value && result.value.date) {
       delete result.value.date
       const originalDate = getHeadersObject.date
