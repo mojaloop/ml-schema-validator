@@ -1,6 +1,6 @@
 {
   "name": "@mojaloop/ml-schema-validator",
-  "version": "9.4.0",
+  "version": "9.4.1",
   "description": "Mojaloop library that contains Joi schema validations that align with the Mojaloop API",
   "main": "src/index.js",
   "repository": {
@@ -38,6 +38,7 @@
     "test:unit": "jest --runInBand --testMatch '**/test/unit/**/*.test.js'",
     "test:coverage": "jest --runInBand --coverage --coverageThreshold='{}' --testMatch '**/test/unit/**/*.test.js'",
     "test:coverage-check": "jest --runInBand --coverage --testMatch '**/test/unit/**/*.test.js'",
+    "test:junit": "jest --runInBand --reporters=default --reporters=jest-junit --testMatch '**/test/unit/**/*.test.js'",
     "lint": "eslint --ignore-path ../.eslintignore .",
     "audit:resolve": "SHELL=sh resolve-audit",
     "audit:check": "SHELL=sh check-audit",
@@ -53,10 +54,10 @@
     "@types/jest": "25.1.4",
     "eslint": "6.8.0",
     "eslint-plugin-jest": "23.8.2",
-    "jest": "25.2.1",
+    "jest": "25.2.4",
     "jest-junit": "10.0.0",
     "npm-audit-resolver": "2.2.0",
-    "npm-check-updates": "4.0.6",
+    "npm-check-updates": "4.1.0",
     "pre-commit": "1.2.2",
     "standard": "14.3.3"
   }
