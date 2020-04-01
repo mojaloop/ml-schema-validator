@@ -45,7 +45,8 @@ const partyIdInfoSchema = Joi.object({
   partyIdType: Elements.PartyIdType.required().description('Type of the identifier'),
   partyIdentifier: Elements.PartyIdentifier.required().description('An identifier for the Party.'),
   partySubIdOrType: Elements.PartySubIdOrType.optional().description('A sub-identifier or sub-type for the Party'),
-  fspId: Elements.FspId.optional().description('FSP ID (if known)')
+  fspId: Elements.FspId.optional().description('FSP ID (if known)'),
+  extensionList: ComplexTypes.extensionListSchema.optional()
 })
 
 const partySchema = Joi.object({
