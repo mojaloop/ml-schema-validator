@@ -1,1 +1,14 @@
-{}
+{
+  "decisions": {
+    "1500|npm-audit-resolver>audit-resolve-core>yargs-parser": {
+      "decision": "fix",
+      "madeAt": 1614827308902
+    },
+    "1500|npm-audit-resolver>yargs-unparser>yargs>yargs-parser": {
+      "decision": "fix",
+      "madeAt": 1614827322700
+    }
+  },
+  "rules": {},
+  "version": 1
+}
